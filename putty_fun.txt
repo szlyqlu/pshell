@@ -1,0 +1,107 @@
+#there is some fun for windows powershell to use putty to do mutil-action
+#those fun is only to create a cmd at a file which is named excmdfile.txt.if you want to exec,just open the file and paste to powershell terminal.
+
+#define the putty path
+$env:Path+=";C:\Program Files (x86)\PuTTY"
+$env:Path
+
+#use the pscp to scp at sametime
+#pscp scp
+$serverlist="host1","host2"
+$sourcefile="test1.txt"
+$PASSWD="password"
+$USERID="username"
+$targetpath="/tmp"
+$putty_cmd=""
+foreach ($h in $serverlist) {
+If ([String]::IsNullOrEmpty($putty_cmd))
+{
+$putty_cmd="echo $h;pscp -pw $PASSWD $sourcefile $USERID@$h`:$targetpath"
+}
+Else
+{
+$putty_cmd="$putty_cmd;echo $h;pscp -pw $PASSWD $sourcefile $USERID@$h`:$targetpath"
+}
+}
+write $putty_cmd >excmdfile.txt
+
+#use the pscp to scp get at sametime
+#pscp get 
+$serverlist="host1","host2"
+$targetpath="./"
+$PASSWD="password"
+$USERID="username"
+$sourcepath="/tmp"
+$putty_cmd=""
+foreach ($h in $serverlist) {
+If ([String]::IsNullOrEmpty($putty_cmd))
+{
+$putty_cmd="echo $h;pscp -pw $PASSWD $USERID@$h`:$sourcepath $targetpath"
+}
+Else
+{
+$putty_cmd="$putty_cmd;echo $h;pscp -pw $PASSWD $USERID@$h`:$sourcepath $targetpath"
+}
+}
+write $putty_cmd >excmdfile.txt
+
+#use putty to login without passwd at sametime
+#putty login no passwd
+$serverlist="host1","host2","host3"
+$PASSWD="password"
+$USERID="username"
+$putty_cmd=""
+foreach ($h in $serverlist) {
+If ([String]::IsNullOrEmpty($putty_cmd))
+{
+$putty_cmd="putty -l $USERID -pw $PASSWD $h"
+}
+Else
+{
+$putty_cmd="$putty_cmd;putty -l $USERID -pw $PASSWD $h"
+}
+}
+write $putty_cmd >excmdfile.txt
+
+#this need to input password at every putty terminal.at the security rule of most company,you should chose this .
+#putty login
+$serverlist="host1","host2","host3"
+$USERID="username"
+$putty_cmd=""
+foreach ($h in $serverlist) {
+If ([String]::IsNullOrEmpty($putty_cmd))
+{
+$putty_cmd="putty -l $USERID $h"
+}
+Else
+{
+$putty_cmd="$putty_cmd;putty -l $USERID $h"
+}
+}
+write $putty_cmd >excmdfile.txt
+
+#use plink(a programm of putty,which allow you to open ssh connection in Window's cmd)
+#this allow you to send same cmd to many server
+#plink no passwd
+$serverlist="host1","host2","host3"
+$PASSWD="password"
+$USERID="username"
+$putty_cmd=""
+$send_cmd="uname -n;date"
+foreach ($h in $serverlist) {
+If ([String]::IsNullOrEmpty($putty_cmd))
+{
+$putty_cmd="plink -pw $PASSWD $USERID@$h ""$send_cmd"""
+}
+Else
+{
+$putty_cmd="$putty_cmd;plink -pw $PASSWD $USERID@$h ""$send_cmd"""
+}
+}
+write $putty_cmd >excmdfile.txt
+
+#if you want to input a lot of server for a var,you need this fun to create.
+
+$original_file ='C:\Users\IBM_ADMIN\Desktop\serverlist.txt'
+$text = [IO.File]::ReadAllText($original_file) -replace "`r`n", "`",`""
+[IO.File]::WriteAllText($original_file, $text)
