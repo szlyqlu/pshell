@@ -102,6 +102,6 @@ write $putty_cmd >excmdfile.txt
 
 #if you want to input a lot of server for a var,you need this fun to create.
 
-$original_file ='C:\Users\IBM_ADMIN\Desktop\serverlist.txt'
+$original_file ='C:\Users\ADMIN\Desktop\serverlist.txt'
 $text = [IO.File]::ReadAllText($original_file) -replace "`r`n", "`",`""
 [IO.File]::WriteAllText($original_file, $text)
